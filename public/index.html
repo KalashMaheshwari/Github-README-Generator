@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>readme.gen — minimalist documentation generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="page">
+        <!-- Subtle animated background -->
+        <div class="background-gradient"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-wrapper">
+                    <div class="logo">
+                        <span class="logo-ascii">[</span>
+                        <span class="logo-text">readme</span>
+                        <span class="logo-dot">.</span>
+                        <span class="logo-text">gen</span>
+                        <span class="logo-ascii">]</span>
+                    </div>
+                    <div class="logo-subtitle">/* Your friendly neighbourhood README generator */</div>
+                </div>
+                <div class="header-right">
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">ready</span>
+                    </div>
+                    <!-- Always visible theme toggle -->
+                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <i class="fas fa-sun theme-icon-light"></i>
+                        <i class="fas fa-moon theme-icon-dark"></i>
+                    </button>
+                    <!-- User info widget -->
+                    <div id="userInfo" class="user-info hidden">
+                        <img id="userAvatar" class="user-avatar" src="" alt="User avatar">
+                        <span id="userName" class="user-name"></span>
+                        <button class="logout-btn" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content -->
+        <main class="main">
+            <div class="content">
+                <!-- Hero section -->
+                <section class="hero">
+                    <div class="intro-text">
+                        <p class="intro-line">paste a github url.</p>
+                        <p class="intro-line">get a perfect readme.</p>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat">
+                            <span class="stat-number">10k+</span>
+                            <span class="stat-label">readmes generated</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">&lt;5s</span>
+                            <span class="stat-label">generation time</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">languages supported</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Input section -->
+                <section class="input-section">
+                    <div class="input-area">
+                        <input type="text" id="repoUrl" class="url-input" placeholder="github.com/owner/repository"
+                            autocomplete="off" spellcheck="false">
+                        <button class="generate-btn" id="generateBtn" onclick="generateReadme()">
+                            <span class="btn-text">generate</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+
+                    <div class="suggestions">
+                        <span class="suggestion-label">try:</span>
+                        <button class="suggestion"
+                            onclick="setExample('https://github.com/facebook/react')">react</button>
+                        <button class="suggestion"
+                            onclick="setExample('https://github.com/vercel/next.js')">next.js</button>
+                        <button class="suggestion"
+                            onclick="setExample('https://github.com/microsoft/vscode')">vscode</button>
+                        <button class="suggestion"
+                            onclick="setExample('https://github.com/tailwindlabs/tailwindcss')">tailwind</button>
+                        <button id="browseReposBtn" class="suggestion special hidden" onclick="openRepoBrowser()">
+                            <i class="fas fa-folder-open"></i> browse your repos
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Processing state -->
+                <section id="processing" class="processing hidden">
+                    <div class="process-container">
+                        <div class="process-header">
+                            <div class="process-spinner"></div>
+                            <span class="process-title">generating readme</span>
+                        </div>
+                        <div class="process-steps">
+                            <div class="step" id="step1">
+                                <span class="step-indicator">○</span>
+                                <span class="step-text">reading repository</span>
+                            </div>
+                            <div class="step" id="step2">
+                                <span class="step-indicator">○</span>
+                                <span class="step-text">analyzing structure</span>
+                            </div>
+                            <div class="step" id="step3">
+                                <span class="step-indicator">○</span>
+                                <span class="step-text">writing documentation</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Output section -->
+                <section id="output" class="output hidden">
+                    <div class="output-container">
+                        <div class="output-header">
+                            <div class="output-info">
+                                <h2 class="repo-name" id="repoName"></h2>
+                                <div class="output-meta">
+                                    <span class="meta-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span id="generationTime"></span>
+                                    </span>
+                                    <span class="meta-item">
+                                        <i class="fas fa-star"></i>
+                                        <span id="repoStars"></span>
+                                    </span>
+                                    <span class="meta-item">
+                                        <i class="fas fa-code"></i>
+                                        <span id="repoLanguage"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="output-actions">
+                                <button class="action copy" onclick="copyReadme()">
+                                    <i class="fas fa-copy"></i>
+                                    <span>copy</span>
+                                </button>
+                                <button class="action download" onclick="downloadReadme()">
+                                    <i class="fas fa-download"></i>
+                                    <span>save</span>
+                                </button>
+                                <button class="action new" onclick="resetUI()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>new</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="output-content">
+                            <div class="view-toggle">
+                                <button class="view-option active" onclick="setView('rendered')">
+                                    <i class="fas fa-eye"></i>
+                                    preview
+                                </button>
+                                <button class="view-option" onclick="setView('markdown')">
+                                    <i class="fab fa-markdown"></i>
+                                    markdown
+                                </button>
+                                <button class="view-option" onclick="setView('raw')">
+                                    <i class="fas fa-code"></i>
+                                    raw
+                                </button>
+                            </div>
+
+                            <div class="readme-container">
+                                <div id="renderedView" class="readme-view active"></div>
+                                <div id="markdownView" class="readme-view">
+                                    <pre class="markdown-pre"><code id="markdownCode"></code></pre>
+                                </div>
+                                <div id="rawView" class="readme-view">
+                                    <textarea id="rawText" class="raw-textarea" readonly></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quality-section">
+                            <div class="quality-header">
+                                <span class="quality-title">documentation quality</span>
+                                <span class="quality-score" id="qualityScore">0%</span>
+                            </div>
+                            <div class="quality-bar">
+                                <div class="quality-fill" id="qualityFill"></div>
+                            </div>
+                            <div class="quality-details" id="qualityDetails"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Error state -->
+                <section id="error" class="error-section hidden">
+                    <div class="error-container">
+                        <div class="error-icon">!</div>
+                        <p class="error-text" id="errorText"></p>
+                        <button class="error-retry" onclick="retryGeneration()">try again</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span>powered by gemini ai</span>
+                </div>
+                <div class="footer-right">
+                    <a href="https://github.com/yourusername/readme-generator" target="_blank" class="footer-link">
+                        <i class="fab fa-github"></i>
+                        <span>source</span>
+                    </a>
+                    <span class="separator">•</span>
+                    <a href="#" class="footer-link" onclick="showAbout(); return false;">about</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Authentication Modal -->
+<div id="authSection" class="auth-section hidden">
+    <div class="auth-container">
+        <button class="auth-close-btn" onclick="closeAuthModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="auth-content">
+            <i class="fab fa-github auth-icon"></i>
+            <h3>Access Private Repositories</h3>
+            <p>Login with GitHub to generate READMEs for your private repositories</p>
+            <button class="auth-btn" onclick="loginWithGitHub()">
+                <i class="fab fa-github"></i>
+                <span>Login with GitHub</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- Repository browser modal -->
+    <div id="repoBrowser" class="repo-browser hidden">
+        <div class="repo-browser-content">
+            <div class="repo-browser-header">
+                <h3>Your Repositories</h3>
+                <button class="close-btn" onclick="closeRepoBrowser()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="repo-filters">
+                <select id="repoFilter" onchange="filterRepos()">
+                    <option value="all">All Repositories</option>
+                    <option value="public">Public Only</option>
+                    <option value="private">Private Only</option>
+                </select>
+                <input type="text" id="repoSearch" placeholder="Search repositories..." oninput="searchRepos()">
+            </div>
+            <div id="repoList" class="repo-list">
+                <!-- Repositories will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
