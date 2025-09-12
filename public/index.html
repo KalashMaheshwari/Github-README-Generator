@@ -66,16 +66,16 @@
 
                     <div class="stats-row">
                         <div class="stat">
-                            <span class="stat-number">10k+</span>
-                            <span class="stat-label">readmes generated</span>
+                            <span class="stat-number">Public</span>
+                            <span class="stat-label">repositories supported</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-number">&lt;5s</span>
-                            <span class="stat-label">generation time</span>
+                            <span class="stat-number">Private</span>
+                            <span class="stat-label">with OAuth login</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-number">50+</span>
-                            <span class="stat-label">languages supported</span>
+                            <span class="stat-number">AI</span>
+                            <span class="stat-label">powered by Gemini</span>
                         </div>
                     </div>
                 </section>
@@ -226,7 +226,8 @@
                     <span>powered by Gemini AI ✦</span>
                 </div>
                 <div class="footer-right">
-                    <a href="https://github.com/KalashMaheshwari/Github-README-Generatorr" target="_blank" class="footer-link">
+                    <a href="https://github.com/KalashMaheshwari/Github-README-Generatorr" target="_blank"
+                        class="footer-link">
                         <i class="fab fa-github"></i>
                         <span>SOURCE</span>
                     </a>
@@ -239,22 +240,22 @@
     </div>
 
     <!-- Authentication Modal -->
-<div id="authSection" class="auth-section hidden">
-    <div class="auth-container">
-        <button class="auth-close-btn" onclick="closeAuthModal()">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="auth-content">
-            <i class="fab fa-github auth-icon"></i>
-            <h3>Access Private Repositories</h3>
-            <p>Login with GitHub to generate READMEs for your private repositories</p>
-            <button class="auth-btn" onclick="loginWithGitHub()">
-                <i class="fab fa-github"></i>
-                <span>Login with GitHub</span>
+    <div id="authSection" class="auth-section hidden">
+        <div class="auth-container">
+            <button class="auth-close-btn" onclick="closeAuthModal()">
+                <i class="fas fa-times"></i>
             </button>
+            <div class="auth-content">
+                <i class="fab fa-github auth-icon"></i>
+                <h3>Access Private Repositories</h3>
+                <p>Login with GitHub to generate READMEs for your private repositories</p>
+                <button class="auth-btn" onclick="loginWithGitHub()">
+                    <i class="fab fa-github"></i>
+                    <span>Login with GitHub</span>
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Repository browser modal -->
     <div id="repoBrowser" class="repo-browser hidden">
