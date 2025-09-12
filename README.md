@@ -1,5 +1,7 @@
 # Github-README-Generator
 
+![Homepage](https://github.com/KalashMaheshwari/Github-README-Generator/blob/6df19da11468c6c7eb6d3172d71f568df27e0666/Screenshots/Homepage.png)
+
 [![GitHub stars](https://img.shields.io/github/stars/KalashMaheshwari/Github-README-Generator?style=for-the-badge)](https://github.com/KalashMaheshwari/Github-README-Generator)
 [![GitHub forks](https://img.shields.io/github/forks/KalashMaheshwari/Github-README-Generator?style=for-the-badge)](https://github.com/KalashMaheshwari/Github-README-Generator)
 [![GitHub issues](https://img.shields.io/github/issues/KalashMaheshwari/Github-README-Generator?style=for-the-badge)](https://github.com/KalashMaheshwari/Github-README-Generator)
