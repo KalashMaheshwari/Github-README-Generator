@@ -41,6 +41,10 @@
                         <i class="fas fa-sun theme-icon-light"></i>
                         <i class="fas fa-moon theme-icon-dark"></i>
                     </button>
+                    <button id="loginBtn" class="login-btn" onclick="showAuthPrompt()">
+                        <i class="fab fa-github"></i>
+                        <span>Login</span>
+                    </button>
                     <!-- User info widget -->
                     <div id="userInfo" class="user-info hidden">
                         <img id="userAvatar" class="user-avatar" src="" alt="User avatar">
@@ -246,9 +250,12 @@
                 <i class="fas fa-times"></i>
             </button>
             <div class="auth-content">
-                <i class="fab fa-github auth-icon"></i>
-                <h3>Access Private Repositories</h3>
-                <p>Login with GitHub to generate READMEs for your private repositories</p>
+                <i class="fab fa-github auth-icon" style="font-size: 1.5rem;"></i>
+                <h3>Unlock Private Repos + 80x More Requests!</h3>
+                <br>
+                <p>Login with GitHub for private repository access and boost your generation limit from 60 to 5,000 requests per hour</p>
+
+
                 <button class="auth-btn" onclick="loginWithGitHub()">
                     <i class="fab fa-github"></i>
                     <span>Login with GitHub</span>

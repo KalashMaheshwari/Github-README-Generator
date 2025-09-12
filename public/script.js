@@ -149,19 +149,24 @@ function handleAuthCallback() {
     }
 }
 
-// Update UI based on auth status - Fixed to not hide theme toggle
+// Update UI based on auth status
 function updateUIForAuth() {
     const userInfo = document.getElementById('userInfo');
     const browseBtn = document.getElementById('browseReposBtn');
+    const loginBtn = document.getElementById('loginBtn');
     
     if (isAuthenticated && currentUser) {
+        // Show user info, hide login button
         userInfo.classList.remove('hidden');
         document.getElementById('userAvatar').src = currentUser.avatar_url;
         document.getElementById('userName').textContent = currentUser.login;
         browseBtn.classList.remove('hidden');
+        loginBtn.style.display = 'none'; // Hide login button
     } else {
+        // Hide user info, show login button
         userInfo.classList.add('hidden');
         browseBtn.classList.add('hidden');
+        loginBtn.style.display = 'flex'; // Show login button
     }
 }
 
