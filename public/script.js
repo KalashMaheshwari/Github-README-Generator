@@ -53,12 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize theme
 function initializeTheme() {
+    // Theme is already set in HTML, just ensure it's correct
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
     
-    document.body.classList.add('no-transition');
+    // Enable transitions after a short delay
     setTimeout(() => {
-        document.body.classList.remove('no-transition');
+        document.body.classList.add('transitions-enabled');
     }, 100);
 }
 
@@ -685,3 +686,4 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+

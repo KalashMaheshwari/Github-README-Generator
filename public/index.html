@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>readme.gen — minimalist documentation generator</title>
+
+    <script>
+        // Immediately set theme to prevent flash
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap"
         rel="stylesheet">
@@ -253,7 +262,8 @@
                 <i class="fab fa-github auth-icon" style="font-size: 1.5rem;"></i>
                 <h3>Unlock Private Repos + 80x More Requests!</h3>
                 <br>
-                <p>Login with GitHub for private repository access and boost your generation limit from 60 to 5,000 requests per hour</p>
+                <p>Login with GitHub for private repository access and boost your generation limit from 60 to 5,000
+                    requests per hour</p>
 
 
                 <button class="auth-btn" onclick="loginWithGitHub()">
