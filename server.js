@@ -1,15 +1,51 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const session = require('express-session');
+const session = require('express-session'); // <-- This MUST be required before connect-redis
 const crypto = require('crypto');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
 
+// --- NEW/FIXED REDIS IMPORTS ---
+// This syntax is for connect-redis@6.0.0
+const connectRedis = require("connect-redis");
+const RedisStore = connectRedis(session);
+const Redis = require("ioredis");
+// --- END NEW/FIXED REDIS IMPORTS ---
+
 const app = express();
 
+// --- SMART SESSION STORAGE (NEW) ---
+let sessionStore;
+
+if (process.env.NODE_ENV === 'production') {
+    // PRODUCTION (Vercel) - Use Redis
+    console.log("Connecting to Redis for session storage...");
+    
+    // Check if KV_URL is set
+    if (!process.env.KV_URL) {
+        console.error("FATAL: KV_URL is not set in production environment!");
+    }
+
+    const redisClient = new Redis(process.env.KV_URL);
+    redisClient.on('error', (err) => console.error('Redis Client Error:', err.message));
+    redisClient.on('connect', () => console.log('Redis Client Connected.'));
+
+    sessionStore = new RedisStore({
+        client: redisClient,
+        prefix: "readme-gen-session:",
+    });
+} else {
+    // DEVELOPMENT (Local) - Use MemoryStore
+    console.log("Using in-memory session storage for development.");
+    sessionStore = new session.MemoryStore();
+}
+// --- END SMART SESSION STORAGE ---
+
+// --- MODIFIED SESSION CONFIGURATION ---
 // Session configuration for OAuth with enhanced security
 app.use(session({
+    store: sessionStore, // Use the smart store we just configured
     secret: process.env.SESSION_SECRET || crypto.randomBytes(64).toString('hex'),
     resave: false,
     saveUninitialized: false,
@@ -21,6 +57,7 @@ app.use(session({
     },
     name: 'sessionId' // Don't use default name
 }));
+// --- END MODIFIED SESSION CONFIGURATION ---
 
 // Middleware
 app.use(cors({
@@ -76,7 +113,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // GitHub OAuth configuration
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-const GITHUB_REDIRECT_URI = process.env.GITHUB_REDIRECT_URI || 'http://localhost:3000/auth/github/callback';
+const GITHUB_REDIRECT_URI = process.env.GITHUB_REDIRECT_URI; // This will be set in .env (local) or Vercel (prod)
 
 // Middleware to check authentication
 function requireAuth(req, res, next) {
@@ -90,6 +127,12 @@ function requireAuth(req, res, next) {
 app.get('/auth/github', (req, res) => {
     const state = crypto.randomBytes(16).toString('hex');
     req.session.oauthState = state;
+    
+    // Critical check
+    if (!GITHUB_REDIRECT_URI) {
+        console.error("FATAL ERROR: GITHUB_REDIRECT_URI is not set. Check your .env file or Vercel environment variables.");
+        return res.status(500).send("Server configuration error: Missing GITHUB_REDIRECT_URI.");
+    }
     
     const authUrl = `https://github.com/login/oauth/authorize?` +
         `client_id=${GITHUB_CLIENT_ID}&` +
@@ -106,6 +149,12 @@ app.get('/auth/github/callback', async (req, res) => {
     // Verify state to prevent CSRF
     if (state !== req.session.oauthState) {
         return res.redirect('/?error=invalid_state');
+    }
+
+    // Critical check
+    if (!GITHUB_REDIRECT_URI) {
+        console.error("FATAL ERROR: GITHUB_REDIRECT_URI is not set for callback. Check your .env file or Vercel environment variables.");
+        return res.status(500).send("Server configuration error: Missing GITHUB_REDIRECT_URI.");
     }
     
     try {
@@ -266,8 +315,8 @@ app.post('/api/generate-readme', async (req, res) => {
     } catch (error) {
         console.error('Error:', error.message);
         const statusCode = error.message.includes('Authentication') ? 401 : 
-                          error.message.includes('rate limit') ? 429 : 
-                          error.message.includes('not found') ? 404 : 500;
+                           error.message.includes('rate limit') ? 429 : 
+                           error.message.includes('not found') ? 404 : 500;
         
         res.status(statusCode).json({ 
             error: error.message,
@@ -488,11 +537,13 @@ Generated with ❤️ by GitHub README Generator
     return Object.values(sections).join('\n\n');
 }
 
+// This app.listen block will run locally, but Vercel will ignore it.
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`\n🚀 GitHub README Generator Server`);
     console.log(`📡 Server running on http://localhost:${PORT}`);
     console.log(`🔑 OAuth configured: ${GITHUB_CLIENT_ID ? 'Yes ✅' : 'No ❌'}`);
     console.log(`🔑 Gemini API configured: ${process.env.GEMINI_API_KEY ? 'Yes ✅' : 'No ❌'}`);
+    console.log(`🔑 Session Mode: ${process.env.NODE_ENV === 'production' ? 'Redis (Production)' : 'In-Memory (Development)'}`);
     console.log(`\n✨ Ready to generate READMEs for public and private repos!\n`);
 });
